@@ -183,6 +183,19 @@ function (lang,   logger,   envOptimize,        file,           parse,
                                         config[optimizerName]);
             }
 
+            // A hacky solution to add semicolons at the end of every optimized script.
+            // This should prevent erratic errors like this:
+            //
+            //   define(..)(function()...).call(this) is not a function
+            //
+            // This is somehow due to the generated code that was merged from
+            // pure JS files and CoffeeScript files:
+            //
+            //   define([..], function() {...})
+            //   (function() { ...}).call(this)
+            //
+            fileContents = fileContents + ';';
+
             file.saveUtf8File(outFileName, fileContents);
         },
 
